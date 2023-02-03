@@ -139,8 +139,8 @@ function render() {
         print(ball.seta * 180 / PI)
     } else {
         selectColor("orange")
-        let _x = O.x + 100 * cos(view_seta)
-        let _y = O.x + 100 * sin(view_seta)
+        let _x = O.x + 100 * sin(view_seta)
+        let _y = O.x + 100 * cos(view_seta)
         ctx.beginPath()
         ctx.moveTo(O.x, O.y)
         ctx.lineTo(_x, _y)
