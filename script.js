@@ -95,7 +95,7 @@ class Ball {
         F.mul(this.m)
         this.vel.add(F)
         this.pos.add(this.vel)
-        print(`${F.toStr()}\t${this.pos.toStr()}\t${seta * 180 / Math.PI}`)
+        //print(`${F.toStr()}\t${this.pos.toStr()}\t${seta * 180 / Math.PI}`)
     }
     //각속도
     move() {
@@ -106,14 +106,17 @@ class Ball {
         this.pos.y = this.length * Math.cos(this.seta) + O.y
 
         /*
-        this.pos.x = O.x + this.l * cos(seta)
-        this.pos.y = O.y + this.l * sin(seta)
+        let w = -G / this.length * cos(this.seta)
+        this.seta += w
+        this.pos.x = O.x + this.l * sin(this.seta)
+        this.pos.y = O.y + this.l * cos(this.seta)
         print(`${this.pos.toStr()}\t${this.seta * 180 / Math.PI}`)
         */
+
     }
     Init() {
         this.l = Math.sqrt((this.x - O.x) ** 2 + (this.y - O.y) ** 2)
-        this.seta = getRad(O.x, O.y, this.x, this.y)
+        this.seta = view_seta
         this.omega = 0
         this.alpha = 0
         this.isHeld = false
@@ -136,9 +139,9 @@ function render() {
     ball.draw()
     if (!ball.isHeld) {
         ball.move()
-        print(ball.seta * 180 / PI)
+        //(ball.seta * 180 / PI)
     } else {
-        selectColor("orange")
+        /*selectColor("orange")
         let _x = O.x + 100 * sin(view_seta)
         let _y = O.x + 100 * cos(view_seta)
         ctx.beginPath()
@@ -150,7 +153,7 @@ function render() {
         ctx.arc(_x, _y, 5, 0, PI2)
         ctx.fill()
         ctx.closePath()
-        selectColor("black")
+        selectColor("black")*/
     }
 
     requestAnimationFrame(render)
@@ -181,8 +184,8 @@ canvas.addEventListener("mousemove", (event) => {
     if (ball.isHeld) {
         ball.pos.x = event.offsetX
         ball.pos.y = event.offsetY
-        view_seta = getRad(O.x, O.y, event.offsetX, event.offsetY)
-        let angle = view_seta * 180 / PI
-        print(`${angle}`)
+        view_seta = getRad(O.y, O.x, event.offsetY, event.offsetX) + PI
+        //let angle = view_seta * 180 / PI
+        //print(`${angle}`)
     }
 })
