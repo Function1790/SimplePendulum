@@ -21,6 +21,14 @@ function selectColor(color) {
     ctx.strokeStyle = color
 }
 
+function drawLine(x1, y1, x2, y2){
+    ctx.beginPath()
+    ctx.moveTo(x1, y1)
+    ctx.lineTo(x2, y2)
+    ctx.stroke()
+    ctx.closePath()
+}
+
 class Vector {
     constructor(x, y) {
         this.x = x
@@ -43,16 +51,17 @@ class Vector {
     }
 }
 
-const O = new Vector(350, 350)
+const Center = new Vector(350, 350)
 
 function getRad(x1, y1, x2, y2) {
     return Math.atan2(-y2 + y1, -x2 + x1)
 }
 
 class Ball {
-    constructor(x, y, r, m) {
+    constructor(x, y, r, m, O) {
         this.l = Math.sqrt((x - O.x) ** 2 + (y - O.y) ** 2)
         this.pos = new Vector(x, y)
+        this.O = O
         this.vel = new Vector(0, 0)
         this.r = r
         this.m = m
@@ -78,6 +87,7 @@ class Ball {
         return -G / this.l * Math.cos(seta)
     }
     draw() {
+        drawLine(this.O.x, this.O.y, this.x, this.y)
         ctx.beginPath()
         ctx.arc(this.x, this.y, this.r, 0, PI2)
         ctx.fill()
@@ -102,8 +112,8 @@ class Ball {
         this.alpha = -1 * G / 10 / this.l * sin(this.seta);
         this.omega += this.alpha;
         this.seta += this.omega;
-        this.pos.x = this.length * Math.sin(this.seta) + O.x
-        this.pos.y = this.length * Math.cos(this.seta) + O.y
+        this.pos.x = this.length * Math.sin(this.seta) + this.O.x
+        this.pos.y = this.length * Math.cos(this.seta) + this.O.y
 
         /*
         let w = -G / this.length * cos(this.seta)
@@ -115,7 +125,7 @@ class Ball {
 
     }
     Init() {
-        this.l = Math.sqrt((this.x - O.x) ** 2 + (this.y - O.y) ** 2)
+        this.l = Math.sqrt((this.x - this.O.x) ** 2 + (this.y - this.O.y) ** 2)
         this.seta = view_seta
         this.omega = 0
         this.alpha = 0
@@ -124,17 +134,12 @@ class Ball {
 }
 
 
-let ball = new Ball(O.x + 100, O.y + 100, 10, 1)
+let ball = new Ball(Center.x + 100, Center.y + 100, 10, 1, Center)
+let ball2 = new Ball(ball.x + 100, ball.y + 100, 10, 1, ball.pos)
 let view_seta = 0
 
 function render() {
     ctx.clearRect(0, 0, C_width, C_height)
-
-    ctx.beginPath()
-    ctx.moveTo(O.x, O.y)
-    ctx.lineTo(ball.x, ball.y)
-    ctx.stroke()
-    ctx.closePath()
 
     ball.draw()
     if (!ball.isHeld) {
@@ -156,6 +161,9 @@ function render() {
         selectColor("black")*/
     }
 
+    ball2.draw()
+    ball2.move()
+
     requestAnimationFrame(render)
 }
 render()
@@ -169,6 +177,7 @@ canvas.addEventListener("mousedown", (event) => {
 })
 
 canvas.addEventListener("mouseup", (event) => {
+    print("A")
     if (ball.isHeld) {
         ball.Init()
     }
@@ -184,7 +193,7 @@ canvas.addEventListener("mousemove", (event) => {
     if (ball.isHeld) {
         ball.pos.x = event.offsetX
         ball.pos.y = event.offsetY
-        view_seta = getRad(O.y, O.x, event.offsetY, event.offsetX) + PI
+        view_seta = getRad(ball.O.y, ball.O.x, event.offsetY, event.offsetX) + PI
         //let angle = view_seta * 180 / PI
         //print(`${angle}`)
     }
